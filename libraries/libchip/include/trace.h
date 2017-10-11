@@ -77,7 +77,7 @@
  */
 
 /**  Softpack Version */
-#define SOFTPACK_VERSION       "1.5"
+#define SOFTPACK_VERSION       "3.1"
 
 
 #define TRACE_LEVEL_DEBUG      5
@@ -89,7 +89,7 @@
 
 /* By default, all traces are output except the debug one. */
 #if !defined(TRACE_LEVEL)
-	#define TRACE_LEVEL TRACE_LEVEL_INFO
+	#define TRACE_LEVEL TRACE_LEVEL_DEBUG
 #endif
 
 /* By default, trace level is static (not dynamic) */
