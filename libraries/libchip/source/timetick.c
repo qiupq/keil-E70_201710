@@ -43,7 +43,7 @@
  *----------------------------------------------------------------------------*/
 #define MAX_TIMER   4
 /** Tick Counter united by ms */
-static volatile uint32_t _dwTickCount = 0;
+volatile uint32_t _dwTickCount = 0;
 static uint8_t SysTickConfigured = 0;
 
 static volatile uint32_t _dwTickTimer = 0;
