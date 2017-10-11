@@ -51,7 +51,24 @@
 
 
 #define CONSOLE_BAUDRATE    115200
+#if defined UART1_FOR_DBG
 
+	#define CONSOLE_ON_UART
+
+	/** UART1 pin RX */
+	#define PIN_UART1_RXD_DBG \
+		{PIO_PA5C_URXD1, PIOA, ID_PIOA, PIO_PERIPH_C, PIO_DEFAULT}
+	/** UART1 pin TX */
+	#define PIN_UART1_TXD_DBG \
+		{PIO_PA4C_UTXD1, PIOA, ID_PIOA, PIO_PERIPH_C, PIO_DEFAULT}
+			
+	#define PINS_UART1_SUM        PIN_UART1_TXD_DBG, PIN_UART1_RXD_DBG
+	/** Pins description corresponding to Rxd,Txd, (UART pins) */
+	#define CONSOLE_PINS		{PINS_UART1_SUM}
+		
+	#define CONSOLE_UART	   UART1
+	#define CONSOLE_ID			ID_UART1
+#else
 /** EDBG used USART1 as the console, but LON support on USART1 only */
 #ifndef USART_LON
 	#define CONSOLE_EDBG
@@ -83,6 +100,40 @@
 
 	#endif
 #endif
+#endif
+#if defined(UART_SIM)			
+		/** UART4 pin RX */
+		#define PIN_UART4_RXD_DBG \
+			{PIO_PD18C_URXD4, PIOD, ID_PIOD, PIO_PERIPH_C, PIO_DEFAULT}
+		/** UART1 pin TX */
+		#define PIN_UART4_TXD_DBG \
+			{PIO_PD19C_UTXD4, PIOD, ID_PIOD, PIO_PERIPH_C, PIO_DEFAULT}
+			//{PIO_PD19C_UTXD4, PIOD, ID_PIOD, PIO_PERIPH_C, PIO_DEFAULT}
+		#define PINS_UART4_SUM        PIN_UART4_TXD_DBG, PIN_UART4_RXD_DBG
+		/** Usart Hw interface used by the console (UART0). */
+		#define CONSOLE_PINS_SIM        {PINS_UART4_SUM}
+		#define CONSOLE_UART_SIM       UART4
+	    #define CONSOLE_ID_SIM          ID_UART4
+		
+#endif
+#if defined(UART_SAMPLE_MODULE)		
+/* CONSOLE for arm9 */
+/** UART0 pin RX */
+#define PIN_UART0_RXD_DBG \
+	{PIO_PA9A_URXD0, PIOA, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+/** UART0 pin TX */
+#define PIN_UART0_TXD_DBG \
+	{PIO_PA10A_UTXD0, PIOA, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+	
+#define PINS_UART0_SUM		  PIN_UART0_TXD_DBG, PIN_UART0_RXD_DBG
+/** Pins description corresponding to Rxd,Txd, (UART pins) */
+#define CONSOLE_PINS_SAMPLE		{PINS_UART0_SUM}
+
+#define CONSOLE_UART_SAMPLE	   UART0
+#define CONSOLE_ID_SAMPLE			ID_UART0
+
+#endif
+
 
 #if defined CONSOLE_ON_USART
 
@@ -110,6 +161,298 @@
 
 /** Is Console Initialized. */
 static uint8_t _ucIsConsoleInitialized = 0;
+#if defined(UART_SIM)			
+
+static uint8_t _ucIsConsoleSIMInitialized = 0;
+
+/**
+ * \brief Configures an UART peripheral with the specified parameters.
+ *
+ * \param baudrate  Baudrate at which the USART should operate (in Hz).
+ * \param masterClock  Frequency of the system master clock (in Hz).
+ */
+extern void SIM_UART_Configure(uint32_t baudrate, uint32_t masterClock)
+{
+
+	const Pin pPins[] = CONSOLE_PINS_SIM;
+
+	Uart *pUart = CONSOLE_UART_SIM;
+	/* Configure PIO */
+	PIO_Configure(pPins, PIO_LISTSIZE(pPins));
+
+	// Reset & disable receiver and transmitter, disable interrupts
+	pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RSTSTA;
+	pUart->UART_IDR = 0xFFFFFFFF;
+#if 1
+
+	pUart->UART_IER = UART_IER_CMP;
+	pUart->UART_IDR = UART_IDR_CMP_EN;
+	pUart->UART_CMPR = UART_CMPR_CMPMODE_FLAG_ONLY | UART_CMPR_CMPPAR 
+					  | UART_CMPR_VAL1(33) | UART_CMPR_VAL2(126) ;
+
+	NVIC_ClearPendingIRQ(UART4_IRQn);
+	//NVIC_EnableIRQ(UART4_IRQn);
+
+#endif	
+	PMC_EnablePeripheral(CONSOLE_ID_SIM);
+	pUart->UART_BRGR = (masterClock / baudrate) / 16;
+	// Configure mode register
+	pUart->UART_MR
+		= (UART_MR_CHMODE_NORMAL | UART_MR_PAR_NO
+		   | UART_MR_BRSRCCK_PERIPH_CLK);
+	// Enable receiver and transmitter
+	pUart->UART_CR = UART_CR_RXEN | UART_CR_TXEN;
+
+	_ucIsConsoleSIMInitialized = 1;
+
+	/* Disable buffering for printf(). */
+#if (defined (__GNUC__) && !defined (__SAMBA__))
+	setvbuf(stdout, (char *)NULL, _IONBF, 0);
+#endif
+}
+
+
+/**
+ * \brief Outputs a character on the UART line.
+ *
+ * \note This function is synchronous (i.e. uses polling).
+ * \param c  Character to send.
+ */
+extern void SIM_UART_PutChar(uint8_t c)
+{
+	Uart *pUart = CONSOLE_UART_SIM;
+
+	if (!_ucIsConsoleSIMInitialized)
+		SIM_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+
+	// Wait for the transmitter to be ready
+	while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0);
+
+	// Send character
+	pUart->UART_THR = c;
+
+	// Wait for the transfer to complete
+	while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0);
+
+}
+
+
+extern uint32_t _dwTickCount;
+/**
+ * \brief Input a character from the UART line.
+ *
+ * \note This function is synchronous
+ * \return character received.
+ */
+
+extern uint32_t SIM_UART_GetChar(void)
+{
+	Uart *pUart = CONSOLE_UART_SIM;
+	//uint32_t	count_char=_dwTickCount;
+	pUart->UART_CR = (pUart->UART_CR) | UART_CR_RSTSTA;
+	
+	if (!_ucIsConsoleSIMInitialized)
+		SIM_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+
+	return pUart->UART_RHR;
+
+}
+extern int SIM_Write(const char *ptr)
+{
+
+	for (; *ptr != 0; ptr++)
+		SIM_UART_PutChar(*ptr);
+
+	return 0;
+
+}
+extern int SIM_Writeln(const char *ptr)
+{
+
+	for (; *ptr != 0; ptr++)
+		SIM_UART_PutChar(*ptr);
+	
+	SIM_UART_PutChar('\r');
+	SIM_UART_PutChar('\n');
+
+	return 0;
+
+}
+extern uint32_t SIMUART_RX_Available(void)
+{
+	Uart *pUart = CONSOLE_UART_SIM;
+
+	if (!_ucIsConsoleSIMInitialized)
+		SIM_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+
+	return (pUart->UART_SR & UART_SR_RXRDY);
+}
+extern char *SIM_gets(char *ptr)
+{
+	uint8_t ch = 0;
+	uint8_t flag1 = 0;
+#if 0
+	while ((flag1 !=1)&&(ch != '\r')) {
+		ch = SIM_UART_GetChar();
+		//SIM_UART_PutChar(ch);
+		DBG_PutChar(ch);
+		*(ptr++) = ch;
+		if(ch=='R' || ch=='K' )
+			flag1=1;
+	}
+#endif
+	*ptr = '\0';
+	return 0;
+
+}
+
+
+#endif
+#if defined(UART_SAMPLE_MODULE)			
+
+static uint8_t _ucIsConsoleSampleInitialized = 0;
+
+/**
+ * \brief Configures an UART peripheral with the specified parameters.
+ *
+ * \param baudrate  Baudrate at which the USART should operate (in Hz).
+ * \param masterClock  Frequency of the system master clock (in Hz).
+ */
+extern void SAMPLE_UART_Configure(uint32_t baudrate, uint32_t masterClock)
+{
+
+	const Pin pPins[] = CONSOLE_PINS_SAMPLE;
+
+	Uart *pUart = CONSOLE_UART_SAMPLE;
+	/* Configure PIO */
+	PIO_Configure(pPins, PIO_LISTSIZE(pPins));
+
+	// Reset & disable receiver and transmitter, disable interrupts
+	pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RSTSTA;
+	pUart->UART_IDR = 0xFFFFFFFF;
+#if 1
+
+	pUart->UART_IER = UART_IER_CMP;
+	pUart->UART_IDR = UART_IDR_CMP_EN;
+	pUart->UART_CMPR = UART_CMPR_CMPMODE_FLAG_ONLY | UART_CMPR_CMPPAR 
+					  | UART_CMPR_VAL1(33) | UART_CMPR_VAL2(126) ;
+
+	NVIC_ClearPendingIRQ(UART0_IRQn);
+	//NVIC_EnableIRQ(UART4_IRQn);
+
+#endif	
+	PMC_EnablePeripheral(CONSOLE_ID_SAMPLE);
+	pUart->UART_BRGR = (masterClock / baudrate) / 16;
+	// Configure mode register
+	pUart->UART_MR
+		= (UART_MR_CHMODE_NORMAL | UART_MR_PAR_NO
+		   | UART_MR_BRSRCCK_PERIPH_CLK);
+	// Enable receiver and transmitter
+	pUart->UART_CR = UART_CR_RXEN | UART_CR_TXEN;
+
+	_ucIsConsoleSampleInitialized = 1;
+
+	/* Disable buffering for printf(). */
+#if (defined (__GNUC__) && !defined (__SAMBA__))
+	setvbuf(stdout, (char *)NULL, _IONBF, 0);
+#endif
+}
+
+
+/**
+ * \brief Outputs a character on the UART line.
+ *
+ * \note This function is synchronous (i.e. uses polling).
+ * \param c  Character to send.
+ */
+extern void SAMPLE_UART_PutChar(uint8_t c)
+{
+	Uart *pUart = CONSOLE_UART_SAMPLE;
+
+	if (!_ucIsConsoleSampleInitialized)
+		SAMPLE_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+
+	// Wait for the transmitter to be ready
+	while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0);
+
+	// Send character
+	pUart->UART_THR = c;
+
+	// Wait for the transfer to complete
+	while ((pUart->UART_SR & UART_SR_TXEMPTY) == 0);
+
+}
+
+
+extern uint32_t _dwTickCount;
+/**
+ * \brief Input a character from the UART line.
+ *
+ * \note This function is synchronous
+ * \return character received.
+ */
+
+extern uint32_t SAMPLE_UART_GetChar(void)
+{
+	Uart *pUart = CONSOLE_UART_SAMPLE;
+	//uint32_t	count_char=_dwTickCount;
+	pUart->UART_CR = (pUart->UART_CR) | UART_CR_RSTSTA;
+	
+	if (!_ucIsConsoleSampleInitialized)
+		SAMPLE_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+	//while ((pUart->UART_SR & UART_SR_RXRDY) == 0);		//want to del ,in case of not manual enter
+
+	return pUart->UART_RHR;
+
+}
+extern int SAMPLE_Write(const char *ptr)
+{
+
+	for (; *ptr != 0; ptr++)
+		SAMPLE_UART_PutChar(*ptr);
+
+	return 0;
+
+}
+extern int SAMPLE_Writeln(const char *ptr)
+{
+
+	for (; *ptr != 0; ptr++)
+		SAMPLE_UART_PutChar(*ptr);
+	
+	SAMPLE_UART_PutChar('\r');
+	SAMPLE_UART_PutChar('\n');
+
+	return 0;
+
+}
+extern uint32_t SAMPLE_UART_RX_Available(void)
+{
+	Uart *pUart = CONSOLE_UART_SAMPLE;
+
+	if (!_ucIsConsoleSampleInitialized)
+		SAMPLE_UART_Configure(CONSOLE_BAUDRATE, BOARD_MCK);
+
+	return (pUart->UART_SR & UART_SR_RXRDY);
+}
+extern char *SAMPLE_gets(char *ptr)
+{
+	uint8_t ch = 0;
+
+	while ((ch = SAMPLE_UART_GetChar())!= '\r') {
+		//DBG_PutChar(ch);
+		SAMPLE_UART_PutChar(ch);
+		*(ptr++) = ch;
+	}
+
+	*ptr = '\0';
+	return 0;
+
+}
+
+
+
+#endif
 
 /**
  * \brief Configures an USART peripheral with the specified parameters.
@@ -129,6 +472,18 @@ extern void DBG_Configure(uint32_t baudrate, uint32_t masterClock)
 	// Reset & disable receiver and transmitter, disable interrupts
 	pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RSTSTA;
 	pUart->UART_IDR = 0xFFFFFFFF;
+#if defined UART1_FOR_DBG
+		/*	set IRQ function	*/
+		pUart->UART_IER = UART_IER_CMP;
+		pUart->UART_IDR = UART_IDR_CMP_EN;
+		pUart->UART_CMPR = UART_CMPR_CMPMODE_FLAG_ONLY | UART_CMPR_CMPPAR 
+						  | UART_CMPR_VAL1(65) | UART_CMPR_VAL2(122) ;
+	
+		NVIC_ClearPendingIRQ(UART1_IRQn);
+		//NVIC_EnableIRQ(UART4_IRQn);
+	
+#endif
+
 	PMC_EnablePeripheral(CONSOLE_ID);
 	pUart->UART_BRGR = (masterClock / baudrate) / 16;
 	// Configure mode register
@@ -222,6 +577,8 @@ extern uint32_t DBG_GetChar(void)
 {
 #if defined CONSOLE_ON_UART
 	Uart *pUart = CONSOLE_UART;
+
+	pUart->UART_CR = (pUart->UART_CR) | UART_CR_RSTSTA;
 
 	if (!_ucIsConsoleInitialized)
 		DBG_Configure(CONSOLE_BAUDRATE, BOARD_MCK);

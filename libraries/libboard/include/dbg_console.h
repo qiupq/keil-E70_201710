@@ -38,6 +38,26 @@
 
 #include <stdint.h>
 
+#if defined(UART_SIM)			
+extern void SIM_UART_Configure(uint32_t dwBaudrate, uint32_t dwMasterClock);
+extern void SIM_UART_PutChar(uint8_t uc);
+extern uint32_t SIM_UART_GetChar(void);
+extern int SIM_Write(const char * );
+extern int SIM_Writeln(const char * );
+extern char *SIM_gets(char * );
+extern uint32_t SIMUART_RX_Available(void);
+#endif
+#if defined(UART_SAMPLE_MODULE)		
+//sample
+extern void SAMPLE_UART_Configure(uint32_t dwBaudrate, uint32_t dwMasterClock);
+extern void SAMPLE_UART_PutChar(uint8_t uc);
+extern uint32_t SAMPLE_UART_GetChar(void);
+extern int SAMPLE_Write(const char * );
+extern int SAMPLE_Writeln(const char * );
+extern char *SAMPLE_gets(char * );
+extern uint32_t SAMPLE_UART_RX_Available(void);
+#endif
+
 extern void DBG_Configure(uint32_t dwBaudrate, uint32_t dwMasterClock);
 extern void DBG_PutChar(uint8_t uc);
 extern uint32_t DBG_GetChar(void);
