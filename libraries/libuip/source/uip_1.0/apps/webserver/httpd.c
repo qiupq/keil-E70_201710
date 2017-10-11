@@ -1,3 +1,4 @@
+#define DEBUG_PRINTF(...) printf(__VA_ARGS__)
 /**
  * \addtogroup apps
  * @{
@@ -297,6 +298,7 @@ handle_connection(struct httpd_state *s)
 void
 httpd_appcall(void)
 {
+#if 1
   struct httpd_state *s = (struct httpd_state *)&(uip_conn->appstate);
 
   if(uip_closed() || uip_aborted() || uip_timedout()) {
@@ -321,6 +323,20 @@ httpd_appcall(void)
   } else {
     uip_abort();
   }
+#else
+	char s_data[50]="1111111111222222222233333333334444444444555555555\n";
+	 if(uip_newdata() || uip_rexmit()) {
+		uip_send((void *)s_data, 50);
+	 }
+
+	 if(uip_closed() || uip_aborted() || uip_timedout()) {
+		DEBUG_PRINTF("httpd_appcall close\n");
+	 } else if(uip_connected()) {
+		 DEBUG_PRINTF("httpd_appcall connected\n");
+
+	 }
+  
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -332,7 +348,11 @@ httpd_appcall(void)
 void
 httpd_init(void)
 {
+#if 1
   uip_listen(HTONS(80));
+#else
+  uip_listen(HTONS(180));
+#endif
 }
 /*---------------------------------------------------------------------------*/
 /** @} */
