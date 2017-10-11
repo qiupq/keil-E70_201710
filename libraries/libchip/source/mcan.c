@@ -1059,6 +1059,7 @@ void MCAN_GetRxDedBuffer(const MCan_ConfigType *mcanConfig,
 		pThisRxBuf = mcanConfig->msgRam.pRxDedBuf
 					 + (buffer * (mcanConfig->rxBufElmtSize & ELMT_SIZE_MASK));
 		tempRy = *pThisRxBuf++;  // word R0 contains ID
+		SCB_DisableDCache();
 
 		if (tempRy & BUFFER_XTD_MASK) {
 			// extended ID?
@@ -1075,8 +1076,8 @@ void MCAN_GetRxDedBuffer(const MCan_ConfigType *mcanConfig,
 		// copy the data from the buffer to the mailbox
 		pRxData = (uint8_t *) pThisRxBuf;
 
-		SCB_CleanDCache_by_Addr((uint32_t *)pRxData, pRxMailbox->info.length);
-		SCB_CleanDCache_by_Addr((uint32_t *) & (pRxMailbox->data[0]),
+		SCB_InvalidateDCache_by_Addr((uint32_t *)pRxData, pRxMailbox->info.length);
+		SCB_InvalidateDCache_by_Addr((uint32_t *) & (pRxMailbox->data[0]),
 								pRxMailbox->info.length);
 
 		for (idx = 0; idx < pRxMailbox->info.length; idx++)
@@ -1090,6 +1091,7 @@ void MCAN_GetRxDedBuffer(const MCan_ConfigType *mcanConfig,
 			mcan->MCAN_NDAT1 = (1 << (buffer - 32));
 
 	}
+	SCB_EnableDCache();
 }
 
 /**
