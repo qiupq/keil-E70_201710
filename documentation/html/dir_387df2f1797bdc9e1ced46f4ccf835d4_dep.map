@@ -1,0 +1,20 @@
+<map id="G" name="G">
+<area shape="rect" id="node4" href="dir_a1ed9e6ce43f56185b52657218621a38.html" title="cdc" alt="" coords="37,68,109,116"/>
+<area shape="rect" id="node5" href="dir_a9f8a4498547fa7a286005a0f7cf242b.html" title="core" alt="" coords="37,164,109,212"/>
+<area shape="rect" id="edge20" href="dir_000152_000153.html" title="4" alt="" coords="77,135,86,155"/>
+<area shape="rect" id="node9" href="dir_319c894e3ff7594c938599ebb69ff6c1.html" title="include" alt="" coords="136,260,211,308"/>
+<area shape="rect" id="edge22" href="dir_000152_000159.html" title="4" alt="" coords="161,230,170,250"/>
+<area shape="rect" id="node8" href="dir_cf24f84a14841ee0ab065672b716483d.html" title="libboard" alt="" coords="133,356,213,404"/>
+<area shape="rect" id="edge8" href="dir_000153_000076.html" title="1" alt="" coords="146,326,156,346"/>
+<area shape="rect" id="edge10" href="dir_000153_000159.html" title="2" alt="" coords="131,232,141,252"/>
+<area shape="rect" id="node6" href="dir_580e219b385d1d790f685ae5ec28ab34.html" title="hid" alt="" coords="133,68,205,116"/>
+<area shape="rect" id="edge4" href="dir_000075_000153.html" title="3" alt="" coords="112,147,121,167"/>
+<area shape="rect" id="edge6" href="dir_000075_000159.html" title="1" alt="" coords="176,232,186,252"/>
+<area shape="rect" id="node7" href="dir_bf854809b21843fa9273a5d444534779.html" title="msc" alt="" coords="229,68,301,116"/>
+<area shape="rect" id="edge12" href="dir_000155_000153.html" title="4" alt="" coords="125,156,134,176"/>
+<area shape="rect" id="edge14" href="dir_000155_000076.html" title="1" alt="" coords="207,336,216,356"/>
+<area shape="rect" id="edge16" href="dir_000155_000159.html" title="3" alt="" coords="196,237,205,257"/>
+<area shape="rect" id="edge18" href="dir_000159_000076.html" title="2" alt="" coords="177,327,186,347"/>
+<area shape="rect" id="graph3" href="dir_387df2f1797bdc9e1ced46f4ccf835d4.html" alt="" coords="27,57,408,223"/>
+<area shape="rect" id="graph2" href="dir_e365a8e7e6dab9d5b63f3989eef3bf2b.html" title="libusb" alt="" coords="16,16,419,233"/>
+</map>

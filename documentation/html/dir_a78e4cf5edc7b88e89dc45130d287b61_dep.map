@@ -1,0 +1,33 @@
+<map id="G" name="G">
+<area shape="rect" id="node4" href="dir_50dcdf6808947c3d1d5ba29a1a6a5c16.html" title="usb_audio_looprec" alt="" coords="1992,68,2152,116"/>
+<area shape="rect" id="node18" href="dir_81818f1c1b01098ad6d8389f2aaf9f72.html" title="libraries" alt="" coords="1120,164,1200,212"/>
+<area shape="rect" id="edge20" href="dir_000049_000063.html" title="7" alt="" coords="1214,186,1223,206"/>
+<area shape="rect" id="node5" href="dir_51b7532575ef4c0700600d7fa9752839.html" title="usb_cdc" alt="" coords="1885,68,1968,116"/>
+<area shape="rect" id="edge14" href="dir_000050_000063.html" title="6" alt="" coords="1214,184,1223,204"/>
+<area shape="rect" id="node6" href="dir_88de4447676f308c48a7a0ff0957d90c.html" title="usb_core" alt="" coords="1771,68,1861,116"/>
+<area shape="rect" id="edge10" href="dir_000051_000063.html" title="5" alt="" coords="1214,186,1223,206"/>
+<area shape="rect" id="node7" href="dir_45bc2b517a2cbc6ea7a105d09a36b8ce.html" title="usb_eem" alt="" coords="1659,68,1747,116"/>
+<area shape="rect" id="edge28" href="dir_000052_000063.html" title="6" alt="" coords="1214,185,1223,205"/>
+<area shape="rect" id="node8" href="dir_fb04d23d897b26bf7fb41d54b6e2efb4.html" title="usb_hid_keyboard" alt="" coords="1480,68,1635,116"/>
+<area shape="rect" id="edge26" href="dir_000053_000063.html" title="9" alt="" coords="1214,182,1224,202"/>
+<area shape="rect" id="node9" href="dir_2d7c917b92448b4e2f0b0d67987d7ce1.html" title="usb_hid_mouse" alt="" coords="1320,68,1456,116"/>
+<area shape="rect" id="edge6" href="dir_000054_000063.html" title="5" alt="" coords="1215,169,1225,189"/>
+<area shape="rect" id="node10" href="dir_6012269e39b5b41df200896ef742494f.html" title="usb_hid_msd" alt="" coords="1179,68,1296,116"/>
+<area shape="rect" id="edge22" href="dir_000055_000063.html" title="10" alt="" coords="1188,145,1207,165"/>
+<area shape="rect" id="node11" href="dir_78f5a3f930acf0f6c40e23f18c1aa372.html" title="usb_hid_transfer" alt="" coords="1011,68,1155,116"/>
+<area shape="rect" id="edge12" href="dir_000056_000063.html" title="8" alt="" coords="1131,134,1140,154"/>
+<area shape="rect" id="node12" href="dir_a1c876644c005fadd3893c5c534690d7.html" title="usb_iad_cdc_cdc" alt="" coords="837,68,987,116"/>
+<area shape="rect" id="edge30" href="dir_000057_000063.html" title="5" alt="" coords="1100,154,1109,174"/>
+<area shape="rect" id="node13" href="dir_3466ee4c83da86cfa78d13ae5b2fb4f0.html" title="usb_iad_cdc_hid" alt="" coords="667,68,813,116"/>
+<area shape="rect" id="edge16" href="dir_000058_000063.html" title="10" alt="" coords="1093,167,1112,187"/>
+<area shape="rect" id="node14" href="dir_470a46498759dcbc21ed515c449c9aef.html" title="usb_iad_cdc_msd" alt="" coords="488,68,643,116"/>
+<area shape="rect" id="edge4" href="dir_000059_000063.html" title="9" alt="" coords="1097,166,1107,186"/>
+<area shape="rect" id="node15" href="dir_39462073abc20ac3a68c0a760653f158.html" title="usb_massstorage" alt="" coords="315,68,464,116"/>
+<area shape="rect" id="edge8" href="dir_000060_000063.html" title="8" alt="" coords="1097,168,1107,188"/>
+<area shape="rect" id="node16" href="dir_5cef99bff5cb17c92cbcd10d411eb791.html" title="usb_video" alt="" coords="197,68,291,116"/>
+<area shape="rect" id="edge24" href="dir_000061_000063.html" title="11" alt="" coords="1092,168,1111,188"/>
+<area shape="rect" id="node17" href="dir_ece50cb78833bdd3d5c8ac95f82931bc.html" title="usb_video_gray" alt="" coords="37,68,173,116"/>
+<area shape="rect" id="edge18" href="dir_000062_000063.html" title="11" alt="" coords="1092,168,1111,188"/>
+<area shape="rect" id="graph3" href="dir_a78e4cf5edc7b88e89dc45130d287b61.html" alt="" coords="27,57,2331,127"/>
+<area shape="rect" id="graph2" href="dir_98dbc3b36a7fb9dc26a3645a65716875.html" title="examples_usb" alt="" coords="16,16,2341,137"/>
+</map>

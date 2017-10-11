@@ -1,0 +1,53 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             WORKAROUND,CODE,READONLY
+    2 00000000                 EXTERN           __vector_table
+    3 00000000 4800            LDR              r0,=__vector_table
+    4 00000002 00 00           ALIGN
+    5 00000004                 END
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M7 --apcs=interw
+ork --depend=.\flash\objects\workaround.d -o.\flash\objects\workaround.o -IC:\K
+eil_v5\ARM\examples\Atmel\SAME70_Xplained\examples\mcan\build\mdk\RTE -IC:\Keil
+_v5\ARM\PACK\Keil\SAM-E_DFP\2.1.0\include -IC:\Keil_v5\ARM\CMSIS\Include -IC:\K
+eil_v5\ARM\PACK\Keil\SAM-E_DFP\2.1.0\Device\SAME70\Include --predefine="__UVISI
+ON_VERSION SETA 520" --predefine="__SAME70Q21__ SETA 1" --list=.\flash\listings
+\workaround.lst ..\..\..\..\libraries\libboard\resources_e70\mdk\workaround.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+WORKAROUND 00000000
+
+Symbol: WORKAROUND
+   Definitions
+      At line 1 in file ..\..\..\..\libraries\libboard\resources_e70\mdk\workar
+ound.s
+   Uses
+      None
+Comment: WORKAROUND unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+__vector_table 00000000
+
+Symbol: __vector_table
+   Definitions
+      At line 2 in file ..\..\..\..\libraries\libboard\resources_e70\mdk\workar
+ound.s
+   Uses
+      At line 3 in file ..\..\..\..\libraries\libboard\resources_e70\mdk\workar
+ound.s
+Comment: __vector_table used once
+1 symbol
+336 symbols in table
