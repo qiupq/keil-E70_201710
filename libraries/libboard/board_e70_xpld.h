@@ -285,21 +285,34 @@
 /* LED pins definitions */
 #define LED_YELLOW0  0
 
-/** LED #0 pin definition (GREEN). */
-#define PIN_LED_0  {PIO_PC8, PIOC, ID_PIOC, PIO_OUTPUT_1, PIO_DEFAULT}
+/** LED D2 pin PA27 definition. */
+#define PIN_LED_0  {PIO_PA27, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
+
+/** LED D3 pin PA27 definition. */
+#define PIN_LED_1  {PIO_PA28, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
+
+/** LED D4 pin PA27 definition. */
+#define PIN_LED_2  {PIO_PA29, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
 
 /** List of all LEDs definitions. */
-#define PINS_LEDS  {PIN_LED_0}
+#define PINS_LEDS  {PIN_LED_0,PIN_LED_1,PIN_LED_2}
 
 /** Number of LEDs */
-#define LED_NUM  1
+#define LED_NUM  3
+#ifndef PIN_SWITCH
+#define PIN_SWITCH_0  {PIO_PD11, PIOD, ID_PIOD, PIO_OUTPUT_1, PIO_DEFAULT}
+#define PIN_SWITCH_1  {PIO_PD13, PIOD, ID_PIOD, PIO_OUTPUT_1, PIO_DEFAULT}
+#define PIN_SWITCH_2  {PIO_PD14, PIOD, ID_PIOD, PIO_OUTPUT_1, PIO_DEFAULT}
 
+/** List of all definitions. */
+#define PINS_SWITCHES  {PIN_SWITCH_0,PIN_SWITCH_1,PIN_SWITCH_2}
+#endif
 /**
  * Push button #0 definition.
  * Attributes = pull-up + debounce + interrupt on rising edge.
  */
 #define PIN_PUSHBUTTON_0 \
-	{PIO_PA11, PIOA, ID_PIOA, PIO_INPUT, PIO_PULLUP | PIO_DEBOUNCE | PIO_IT_FALL_EDGE}
+	{PIO_PA31, PIOA, ID_PIOA, PIO_INPUT, PIO_PULLUP | PIO_DEBOUNCE | PIO_IT_FALL_EDGE}
 
 /** List of all push button definitions. */
 #define PINS_PUSHBUTTONS {PIN_PUSHBUTTON_0}
@@ -412,12 +425,12 @@
 #define PINS_ISO7816        PIN_USART0_TXD, PIN_USART0_SCK,PIN_ISO7816_RSTMC
 
 /** MCAN0 pin Transmit Data (TXD) */
-#define PIN_MCAN0_TXD {PIO_PB2A_CANTX0, PIOA, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+#define PIN_MCAN0_TXD {PIO_PB2A_CANTX0, PIOB, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
 /** MCAN0 pin Receive Data (RXD) */
-#define PIN_MCAN0_RXD {PIO_PB3A_CANRX0, PIOA, ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+#define PIN_MCAN0_RXD {PIO_PB3A_CANRX0, PIOB, ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
 
-/** MCAN1 pin Transmit Data (TXD) */
-#define PIN_MCAN1_TXD {PIO_PC14C_CANTX1, PIOC, ID_PIOC, PIO_PERIPH_C, PIO_DEFAULT}
+/** MCAN1 pin Transmit Data (TXD) qiupq 2016-10-19*/
+#define PIN_MCAN1_TXD {PIO_PD12B_CANTX1, PIOD, ID_PIOD, PIO_PERIPH_B, PIO_DEFAULT}
 /** MCAN1 pin Receive Data (RXD) */
 #define PIN_MCAN1_RXD {PIO_PC12C_CANRX1, PIOC, ID_PIOC, PIO_PERIPH_C, PIO_DEFAULT}
 
