@@ -29,6 +29,13 @@
 
 #ifndef _BOARD_H_
 #define _BOARD_H_
+/* macro for atmel E70 board:wind electric*/
+#define UART_SAMPLE_MODULE
+#define UART_SIM
+#define UART1_FOR_DBG
+//#define RWFLASH 1
+
+
 
 #if defined(BOARD_SAMV71_XULT)
 	#include "board_v71_xult.h"
