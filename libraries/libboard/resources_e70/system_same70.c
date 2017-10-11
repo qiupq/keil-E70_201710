@@ -51,6 +51,7 @@ extern "C" {
 	#define SYS_BOARD_MCKR      (PMC_MCKR_PRES_CLK_2 | PMC_MCKR_CSS_PLLA_CLK \
 								 | SYS_BOARD_MCKR_MDIV)
 #else
+/* PLLACK = 300M = 12*25/1 */
 	#define SYS_BOARD_PLLAR     (CKGR_PLLAR_ONE | CKGR_PLLAR_MULA(0x18U) | \
 								 CKGR_PLLAR_PLLACOUNT(0x3fU) | CKGR_PLLAR_DIVA(0x1U))
 
@@ -70,12 +71,13 @@ extern "C" {
 {
 	uint32_t read_MOR;
 	/* Set FWS according to SYS_BOARD_MCKR configuration */
-	EFC->EEFC_FMR = EEFC_FMR_FWS(5);
+	EFC->EEFC_FMR = EEFC_FMR_FWS(5)|EEFC_FMR_CLOE;
 
 	/* Before switching MAIN OSC on external crystal : enable it and don't
 	 * disable at the same time RC OSC in case of if MAIN OSC is still using RC
 	 * OSC
 	 */
+#if 0
 
 	read_MOR = PMC->CKGR_MOR;
 	/* enable external crystal - enable RC OSC */
@@ -97,7 +99,24 @@ extern "C" {
 
 	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) {
 	}
+#else
+	/* Initialize main oscillator */
+	if (!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL)) {
+		PMC->CKGR_MOR = (PMC->CKGR_MOR & ~CKGR_MOR_MOSCXTBY) | CKGR_MOR_KEY_PASSWD | SYS_BOARD_OSCOUNT | 
+						CKGR_MOR_MOSCXTEN;
 
+		while (!(PMC->PMC_SR & PMC_SR_MOSCXTS)) {
+		}
+	}
+
+	/* Switch to 3-20MHz Xtal oscillator */
+	PMC->CKGR_MOR |= CKGR_MOR_KEY_PASSWD | CKGR_MOR_MOSCSEL;
+
+	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) {
+	}
+
+
+#endif
 	PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_CSS_Msk) |
 					PMC_MCKR_CSS_MAIN_CLK;
 
@@ -105,14 +124,24 @@ extern "C" {
 	}
 
 	/* Initialize PLLA */
+	PMC->CKGR_PLLAR = CKGR_PLLAR_ONE | CKGR_PLLAR_MULA(0);// Always stop PLL first!
 	PMC->CKGR_PLLAR = SYS_BOARD_PLLAR;
 
 	while (!(PMC->PMC_SR & PMC_SR_LOCKA)) {
 	}
+#if 0
+
+	#define SYS_BOARD_PLLAR     (CKGR_PLLAR_ONE | CKGR_PLLAR_MULA(0x18U) | \
+									 CKGR_PLLAR_PLLACOUNT(0x3fU) | CKGR_PLLAR_DIVA(0x1U))
+	
+#define SYS_BOARD_MCKR_MDIV (PMC_MCKR_MDIV_PCK_DIV2)
+	#define SYS_BOARD_MCKR      (PMC_MCKR_PRES_CLK_1 | PMC_MCKR_CSS_PLLA_CLK \
+									 | SYS_BOARD_MCKR_MDIV)
 
 	/* Switch to main clock: DO NOT modify MDIV and CSS feild at the same access */
 	PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_MDIV_Msk) |
 					SYS_BOARD_MCKR_MDIV;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY));
 	PMC->PMC_MCKR = (SYS_BOARD_MCKR & ~PMC_MCKR_CSS_Msk) | PMC_MCKR_CSS_MAIN_CLK;
 
 	while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
@@ -123,6 +152,20 @@ extern "C" {
 
 	while (!(PMC->PMC_SR & PMC_SR_MCKRDY)) {
 	}
+#endif
+	PMC->PMC_MCKR = (PMC->PMC_MCKR & ~(uint32_t)PMC_MCKR_MDIV_Msk) | SYS_BOARD_MCKR_MDIV;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY));
+
+	PMC->PMC_MCKR = (PMC->PMC_MCKR & (~PMC_MCKR_PRES_Msk)) | PMC_MCKR_PRES_CLK_1 ;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY));
+	
+	/* Switch to PLLA */
+	PMC->PMC_MCKR = (PMC->PMC_MCKR & (~PMC_MCKR_CSS_Msk)) |	PMC_MCKR_CSS_PLLA_CLK;
+	while (!(PMC->PMC_SR & PMC_SR_MCKRDY));
+
+	/* Update the SystemFrequency variable */
+	SystemCoreClockUpdate();
+	EFC->EEFC_FMR = EEFC_FMR_FWS(5)|EEFC_FMR_CLOE;
 
 	SystemCoreClock = CHIP_FREQ_CPU_MAX;
 }
