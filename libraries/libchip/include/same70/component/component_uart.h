@@ -100,6 +100,8 @@ typedef struct {
 #define UART_IDR_PARE (0x1u << 7) /**< \brief (UART_IDR) Disable Parity Error Interrupt */
 #define UART_IDR_TXEMPTY (0x1u << 9) /**< \brief (UART_IDR) Disable TXEMPTY Interrupt */
 #define UART_IDR_CMP (0x1u << 15) /**< \brief (UART_IDR) Disable Comparison Interrupt */
+#define UART_IDR_CMP_EN (0x0u << 15) /**< \brief (UART_IDR) Enable Comparison Interrupt */
+
 /* -------- UART_IMR : (UART Offset: 0x0010) Interrupt Mask Register -------- */
 #define UART_IMR_RXRDY (0x1u << 0) /**< \brief (UART_IMR) Mask RXRDY Interrupt */
 #define UART_IMR_TXRDY (0x1u << 1) /**< \brief (UART_IMR) Disable TXRDY Interrupt */
